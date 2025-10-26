@@ -1,14 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Smartphone, Globe, Star, Moon, Sun } from 'lucide-react';
+// First, import the social media icons from lucide-react
+import { Bell, Smartphone, Globe, Star, Moon, Sun, Linkedin, Instagram, Mail } from 'lucide-react';
 import logo from './assets/logo.png';
+
 
 export default function TimerComingSoon() {
   const [countdown, setCountdown] = useState({ days: 15, hours: 8, minutes: 42, seconds: 30 });
-  const [darkMode, setDarkMode] = useState(false);
+  
+  // Initialize dark mode based on localStorage or system preference
+  const [darkMode, setDarkMode] = useState(() => {
+    // First check if user has manually set a preference
+    const savedTheme = localStorage.getItem('userThemePreference');
+    if (savedTheme !== null) {
+      return savedTheme === 'dark';
+    }
+    // Otherwise use system preference
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+  
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
 
+
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e) => {
+      // Only auto-update if user hasn't set a manual preference
+      if (!localStorage.getItem('userThemePreference')) {
+        setDarkMode(e.matches);
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+
+  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown(prev => {
@@ -37,8 +68,18 @@ export default function TimerComingSoon() {
       });
     }, 1000);
 
+
     return () => clearInterval(timer);
   }, []);
+
+
+  // Handle manual theme toggle
+  const handleToggle = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem('userThemePreference', newMode ? 'dark' : 'light');
+  };
+
 
   const handleNotifyMe = async (e) => {
     e.preventDefault();
@@ -49,6 +90,7 @@ export default function TimerComingSoon() {
       return;
     }
 
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setMessage('⚠️ Please enter a valid email');
@@ -56,7 +98,9 @@ export default function TimerComingSoon() {
       return;
     }
 
+
     setIsSubmitting(true);
+
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -73,7 +117,9 @@ export default function TimerComingSoon() {
         }),
       });
 
+
       const data = await response.json();
+
 
       if (data.success) {
         setMessage('✅ Thanks! We\'ll notify you at launch!');
@@ -86,9 +132,11 @@ export default function TimerComingSoon() {
       console.error('Error:', error);
     }
 
+
     setIsSubmitting(false);
     setTimeout(() => setMessage(''), 5000);
   };
+
 
   const features = [
     {
@@ -113,6 +161,7 @@ export default function TimerComingSoon() {
     }
   ];
 
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       darkMode 
@@ -133,29 +182,30 @@ export default function TimerComingSoon() {
             <span className="text-xl font-bold">PropyAI</span>
           </div>
           
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#about" className={`transition-colors ${darkMode ? 'hover:text-purple-400' : 'hover:text-purple-600'}`}>About</a>
-            <a href="#features" className={`transition-colors ${darkMode ? 'hover:text-purple-400' : 'hover:text-purple-600'}`}>Features</a>
-            <a href="#notify" className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:shadow-lg transition-all">
-              Get Notified
-            </a>
+          <div className="flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#about" className={`transition-colors ${darkMode ? 'hover:text-purple-400' : 'hover:text-purple-600'}`}>About</a>
+              <a href="#features" className={`transition-colors ${darkMode ? 'hover:text-purple-400' : 'hover:text-purple-600'}`}>Features</a>
+              <a href="#contact" className={`transition-colors ${darkMode ? 'hover:text-purple-400' : 'hover:text-purple-600'}`}>Contact</a>
+              <a href="#notify" className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:shadow-lg transition-all">
+                Get Notified
+              </a>
+            </div>
+            
+            {/* Mode Toggle Button - Inside navbar */}
+            <button
+              onClick={handleToggle}
+              className={`p-2 rounded-full transition-all duration-300 ${
+                darkMode 
+                  ? 'bg-gray-700 hover:bg-gray-600' 
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </nav>
-
-      {/* Mode Toggle */}
-      <div className="fixed top-6 right-6 z-20">
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className={`p-3 rounded-full transition-all duration-300 ${
-            darkMode 
-              ? 'bg-gray-700 hover:bg-gray-600' 
-              : 'bg-gray-200 hover:bg-gray-300'
-          }`}
-        >
-          {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-        </button>
-      </div>
 
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -195,6 +245,7 @@ export default function TimerComingSoon() {
           </p>
         </div>
 
+
         {/* Countdown */}
         <div className="max-w-4xl mx-auto mb-20">
           <div className="grid grid-cols-4 gap-4 md:gap-8">
@@ -228,6 +279,7 @@ export default function TimerComingSoon() {
           </div>
         </div>
 
+
         {/* About Section */}
         <div id="about" className="max-w-3xl mx-auto mb-16 text-center scroll-mt-24">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">What is PropyAI?</h2>
@@ -238,6 +290,7 @@ export default function TimerComingSoon() {
             Whether you want short notes, animated explanation, test preparation and even have some entertainment time, Proppy provides an interactive and beautiful place to keep you on track.
           </p>
         </div>
+
 
         {/* Features Grid */}
         <div id="features" className="max-w-6xl mx-auto mb-16 scroll-mt-24">
@@ -269,6 +322,7 @@ export default function TimerComingSoon() {
             ))}
           </div>
         </div>
+
 
         {/* Notify Me Section */}
         <div id="notify" className="max-w-md mx-auto text-center scroll-mt-24">
@@ -309,6 +363,59 @@ export default function TimerComingSoon() {
                 {message}
               </p>
             )}
+          </div>
+        </div>
+
+
+        {/* Contact Section */}
+        <div id="contact" className="max-w-4xl mx-auto mt-20 text-center scroll-mt-24">
+          <div className={`rounded-2xl p-8 ${
+            darkMode 
+              ? 'bg-white/10 border border-white/20' 
+              : 'bg-white border border-gray-200'
+          } backdrop-blur-md`}>
+            <h3 className="text-2xl font-bold mb-6">Connect With Us</h3>
+            <div className="flex justify-center gap-8">
+              <a 
+                href="https://linkedin.com/company/proppyai" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={`flex items-center gap-2 hover:scale-110 transition-transform ${
+                  darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-blue-600 hover:text-blue-700'
+                }`}
+              >
+                <Linkedin className="w-6 h-6" />
+                <span>LinkedIn</span>
+              </a>
+              
+              <a 
+                href="https://instagram.com/proppyai" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={`flex items-center gap-2 hover:scale-110 transition-transform ${
+                  darkMode ? 'text-pink-300 hover:text-pink-200' : 'text-pink-600 hover:text-pink-700'
+                }`}
+              >
+                <Instagram className="w-6 h-6" />
+                <span>Instagram</span>
+              </a>
+              
+              <a 
+                href="mailto:info@proppyai.com"
+                className={`flex items-center gap-2 hover:scale-110 transition-transform ${
+                  darkMode ? 'text-purple-300 hover:text-purple-200' : 'text-purple-600 hover:text-purple-700'
+                }`}
+              >
+                <Mail className="w-6 h-6" />
+                <span>Email Us</span>
+              </a>
+            </div>
+            
+            <p className={`mt-8 text-sm ${
+              darkMode ? 'text-blue-200' : 'text-gray-600'
+            }`}>
+              © 2025 PropyAI. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
