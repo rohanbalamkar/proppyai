@@ -5,7 +5,7 @@ import logo from './assets/logo.png';
 
 
 export default function TimerComingSoon() {
-  const targetDate = new Date('2025-11-02T00:00:00'); // Set target date
+  const targetDate = new Date('2025-11-07T10:00:00'); // Set target date
 
   const calculateTimeLeft = () => {
     const now = new Date();
@@ -235,7 +235,7 @@ export default function TimerComingSoon() {
           <p className={`text-xl md:text-2xl font-light ${
             darkMode ? 'text-blue-200' : 'text-gray-600'
           }`}>
-            The ultimate timer app for productivity enthusiasts
+            The ultimate Study app for productivity enthusiasts
           </p>
         </div>
 
