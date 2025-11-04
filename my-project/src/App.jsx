@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 // First, import the social media icons from lucide-react
 import { Bell, Smartphone, Globe, Star, Moon, Sun, Linkedin, Instagram, Mail } from 'lucide-react';
 import logo from './assets/logo.png';
+import proppyai from './assets/proppyai.png';
 
 
 export default function TimerComingSoon() {
@@ -169,11 +170,11 @@ export default function TimerComingSoon() {
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
-              src={logo} 
+              src={proppyai} 
               alt="PropyAI" 
-              className="w-10 h-10 rounded-lg"
+              className="w-24 h-11 rounded-lg"
             />
-            <span className="text-xl font-bold">PropyAI</span>
+            <span className="text-xl font-bold"></span>
           </div>
           
           <div className="flex items-center gap-8">
